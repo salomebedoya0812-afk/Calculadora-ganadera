@@ -26,9 +26,29 @@ def formulario():
                 border-radius:12px;
                 box-shadow:0 15px 35px rgba(0,0,0,0.25);
                 text-align:center;
-                width:350px;
+                width:400px;
+                overflow-y:auto;
+                max-height:90vh;
             }
-            input, select{
+            .bloque{
+                margin-top:20px;
+                margin-bottom:20px;
+                padding:20px;
+                border-radius:10px;
+                color:#000;
+                box-shadow:0 4px 10px rgba(0,0,0,0.15);
+            }
+            .vaca{
+                background: linear-gradient(135deg, #AEC6CF, #B0E0E6);
+            }
+            .cerdo{
+                background: linear-gradient(135deg, #F4C2C2, #FFD1DC);
+            }
+            .gallina{
+                background: linear-gradient(135deg, #FFFACD, #FAFAD2);
+            }
+
+            input{
                 width:100%;
                 padding:8px;
                 margin-top:5px;
@@ -47,29 +67,17 @@ def formulario():
                 font-weight:bold;
             }
             button:hover{ background:#3e8e41; }
+            h2{ margin-top:20px; }
         </style>
-        <script>
-            function mostrarFormulario(){
-                var animal = document.getElementById("animal").value;
-                document.getElementById("form_vaca").style.display = (animal=="vaca") ? "block" : "none";
-                document.getElementById("form_cerdo").style.display = (animal=="cerdo") ? "block" : "none";
-                document.getElementById("form_gallina").style.display = (animal=="gallina") ? "block" : "none";
-            }
-        </script>
     </head>
     <body>
         <div class="contenedor">
             <h1>Calculadora de Producción 🐄🐖🐔</h1>
-            <label>Seleccione el animal:</label>
-            <select id="animal" onchange="mostrarFormulario()">
-                <option value="">-- Elegir --</option>
-                <option value="vaca">Vaca</option>
-                <option value="cerdo">Cerdo</option>
-                <option value="gallina">Gallina</option>
-            </select>
 
             <!-- Formulario Vaca -->
-            <form id="form_vaca" action="/resultado" method="post" style="display:none;">
+            <div class="bloque vaca">
+            <h2>Vacas</h2>
+            <form action="/resultado" method="post">
                 <input type="hidden" name="tipo" value="vaca">
                 <label>¿Cuántas vacas hay?</label>
                 <input type="number" name="cantidad">
@@ -79,11 +87,14 @@ def formulario():
                 <input type="number" name="precio">
                 <label>¿Cuáles son los gastos diarios por vaca?</label>
                 <input type="number" name="gasto">
-                <button type="submit">Calcular</button>
+                <button type="submit">Calcular Vacas</button>
             </form>
+        </div>
 
             <!-- Formulario Cerdo -->
-            <form id="form_cerdo" action="/resultado" method="post" style="display:none;">
+            <div class="bloque cerdo">
+            <h2>Cerdos</h2>
+            <form action="/resultado" method="post">
                 <input type="hidden" name="tipo" value="cerdo">
                 <label>¿Cuántos cerdos hay?</label>
                 <input type="number" name="cantidad">
@@ -93,11 +104,14 @@ def formulario():
                 <input type="number" name="precio">
                 <label>¿Cuáles son los gastos diarios por cerdo?</label>
                 <input type="number" name="gasto">
-                <button type="submit">Calcular</button>
+                <button type="submit">Calcular Cerdos</button>
             </form>
+        </div>
 
             <!-- Formulario Gallina -->
-            <form id="form_gallina" action="/resultado" method="post" style="display:none;">
+            <div class="bloque gallina">
+            <h2>Gallinas</h2>
+            <form action="/resultado" method="post">
                 <input type="hidden" name="tipo" value="gallina">
                 <label>¿Cuántas gallinas hay?</label>
                 <input type="number" name="cantidad">
@@ -107,7 +121,7 @@ def formulario():
                 <input type="number" name="precio">
                 <label>¿Cuáles son los gastos diarios por gallina?</label>
                 <input type="number" name="gasto">
-                <button type="submit">Calcular</button>
+                <button type="submit">Calcular Gallinas</button>
             </form>
         </div>
     </body>
@@ -122,15 +136,22 @@ def resultado():
     precio = float(request.form['precio'])
     gasto = float(request.form['gasto'])
 
-    # Cálculo genérico: cantidad * producción * precio
     total_produccion = cantidad * produccion
     ingreso = total_produccion * precio
     gastos = cantidad * gasto
     ganancia = ingreso - gastos
 
+    # Personalizar unidad según animal
+    if tipo == "vaca":
+        unidad = "litros de leche"
+    elif tipo == "cerdo":
+        unidad = "lechones"
+    else:
+        unidad = "huevos"
+
     return f"""
     <h1>Resultados ({tipo.capitalize()})</h1>
-    Producción total: {total_produccion} unidades <br>
+    Producción total: {total_produccion} {unidad} <br>
     Ingreso total: ${ingreso} <br>
     Gastos totales: ${gastos} <br>
     <h3>Ganancia: ${ganancia}</h3>
